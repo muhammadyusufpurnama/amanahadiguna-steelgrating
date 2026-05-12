@@ -349,19 +349,6 @@ app.get('/', (req, res) => {
                                 </div>
                             </div>
 
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-manufacture font-bold mb-2">Harga Besi per Kg (Rp)</label>
-                                    <input type="number" id="price-per-kg" value="16068" readonly class="w-full p-3 border-2 border-emerald-200 rounded-lg bg-gray-100 cursor-not-allowed">
-                                    <p class="text-xs text-slate-400 mt-1">*Harga tetap, tidak dapat diubah</p>
-                                </div>
-                                <div>
-                                    <label class="block text-manufacture font-bold mb-2">Harga Galvanis per Kg (Rp)</label>
-                                    <input type="number" id="price-galvanis" value="8000" readonly class="w-full p-3 border-2 border-emerald-200 rounded-lg bg-gray-100 cursor-not-allowed">
-                                    <p class="text-xs text-slate-400 mt-1">*Harga tetap, tidak dapat diubah</p>
-                                </div>
-                            </div>
-
                             <!-- Kondisi & Jenis Barang -->
                             <div class="grid md:grid-cols-2 gap-6">
                                 <div><label class="block text-manufacture font-bold mb-2">Kondisi Barang</label><select id="grating-coating" class="w-full p-3 border-2 border-emerald-200 rounded-lg" onchange="calculateSteelGratingWeight()"><option value="galvanis">Galvanis</option><option value="non-galvanis">Tanpa Galvanis</option></select></div>
@@ -375,11 +362,11 @@ app.get('/', (req, res) => {
                                 <p class="text-sm text-slate-600 font-bold">Detail Perhitungan:</p>
                                 <p class="text-xs text-slate-600">Jumlah Bearing: <strong id="calc-jumlah-bearing" class="text-manufacture">0</strong> buah</p>
                                 <p class="text-xs text-slate-600">Volume Bearing: <strong id="calc-volume-bearing" class="text-manufacture">0</strong> mm³</p>
-                                <p class="text-xs text-slate-600">Berat Bearing: <strong id="calc-berat-bearing" class="text-manufacture">0</strong> kg (x10^-9 x 7850)</p>
+                                <p class="text-xs text-slate-600">Berat Bearing: <strong id="calc-berat-bearing" class="text-manufacture">0</strong> kg</p>
                                 <p class="text-xs text-slate-600">Jumlah Crossbar: <strong id="calc-jumlah-crossbar" class="text-manufacture">0</strong> buah</p>
-                                <p class="text-xs text-slate-600">Berat Crossbar: <strong id="calc-berat-crossbar" class="text-manufacture">0</strong> kg (x10^-9 x 7850)</p>
+                                <p class="text-xs text-slate-600">Berat Crossbar: <strong id="calc-berat-crossbar" class="text-manufacture">0</strong> kg</p>
                                 <p class="text-xs text-slate-600">Volume End Plate: <strong id="calc-volume-endplate" class="text-manufacture">0</strong> mm³</p>
-                                <p class="text-xs text-slate-600">Berat End Plate: <strong id="calc-berat-endplate" class="text-manufacture">0</strong> kg (x10^-9 x 7850)</p>
+                                <p class="text-xs text-slate-600">Berat End Plate: <strong id="calc-berat-endplate" class="text-manufacture">0</strong> kg</p>
                                 <div class="border-t border-emerald-200 pt-2 mt-2">
                                     <p class="text-sm font-bold text-manufacture">Berat 1 Steel Grating: <strong id="calculated-weight" class="text-manufacture text-lg">0</strong> kg</p>
                                 </div>
@@ -496,7 +483,7 @@ app.get('/', (req, res) => {
 
         <script>
         // ==================== KONSTANTA ====================
-        const HARGA_BESI_PER_KG = 16068;
+        const HARGA_BESI_PER_KG = 13068;
         const HARGA_GALVANIS_PER_KG = 8000;
         const BASE_PRICE = 75000;
         
@@ -540,7 +527,7 @@ app.get('/', (req, res) => {
             }
             
             // 1. Jumlah Bearing = ROUNDDOWN((Lebar - Tebal Bearing) / Jarak antar Bearing, 0) + 1
-            const jumlahBearing = Math.floor((lebar - tebalBearing) / jarakBearing) + 1;
+            const jumlahBearing = Math.ceil((lebar - tebalBearing) / jarakBearing) + 1;
             
             // 2. Volume Bearing = Tinggi Bearing * Tebal Bearing * Panjang
             const volumeBearing = tinggiBearing * tebalBearing * panjang;
