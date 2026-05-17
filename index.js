@@ -54,6 +54,9 @@ app.get('/', (req, res) => {
             .industrial-pattern {
                 background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231A5A44' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             }
+            .calculator-image {
+                transition: opacity 0.3s ease-in-out;
+            }
         </style>
     </head>
     <body class="bg-slate-50 text-slate-900 font-sans industrial-pattern">
@@ -277,18 +280,27 @@ app.get('/', (req, res) => {
                     
                     <div class="p-8">
                         <div id="calculator-image-container" class="mb-6 text-center hidden">
-                            <img src="/calculator-SG.png" alt="Steel Grating Calculator" class="mx-auto max-h-48 object-contain rounded-lg border border-emerald-200 shadow-md">
+                            <img id="calculator-image" src="/calculator-SG.png" alt="Calculator Illustration" class="calculator-image mx-auto max-h-48 object-contain rounded-lg border border-emerald-200 shadow-md">
                         </div>
                         <div class="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-manufacture font-bold mb-2 industrial-text">Pilih Jenis Produk</label>
-                                <select id="calc-product-type" class="w-full p-3 border-2 border-emerald-200 rounded-lg focus:outline-none focus:border-manufacture bg-white font-semibold">
-                                    <option value="grating">Steel Grating</option>
-                                    <option value="pole">Pole / Tiang</option>
-                                    <option value="guardrail">Guard Rail</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label class="block text-manufacture font-bold mb-2 industrial-text">Pilih Jenis Produk</label>
+                            <select id="calc-product-type" class="w-full p-3 border-2 border-emerald-200 rounded-lg focus:outline-none focus:border-manufacture bg-white font-semibold">
+                                <option value="grating">Steel Grating</option>
+                                <option value="pole">Pole / Tiang</option>
+                                <option value="guardrail">Guard Rail</option>
+                            </select>
                         </div>
+                        <div>
+                            <label class="block text-manufacture font-bold mb-2 industrial-text">Sub Kategori</label>
+                            <select id="calc-sub-category" class="w-full p-3 border-2 border-emerald-200 rounded-lg focus:outline-none focus:border-manufacture bg-white font-semibold">
+                                <option value="standard">Standard (Steel Grating)</option>
+                                <option value="stair-tread">Stair Tread</option>
+                                <option value="sgt">SGT</option>
+                                <option value="sgu">SGU</option>
+                            </select>
+                        </div>
+                    </div>
 
                         <!-- Panel Steel Grating -->
                         <div id="calc-grating-panel" class="space-y-6 mt-6">
@@ -300,52 +312,85 @@ app.get('/', (req, res) => {
 
                             <!-- Input Parameter Bearing & Crossbar Baru -->
                             <div class="grid md:grid-cols-2 gap-6">
+                                <!-- Tinggi Bearing (H) -->
                                 <div>
                                     <label class="block text-manufacture font-bold mb-2">Tinggi Bearing (H) - mm</label>
-                                    <select id="bearing-height" class="w-full p-3 border-2 border-emerald-200 rounded-lg" onchange="calculateSteelGratingWeight()">
-                                        <option value="65">65</option>
-                                        <option value="60">60</option>
-                                        <option value="55">55</option>
-                                        <option value="50">50</option>
-                                        <option value="45">45</option>
-                                        <option value="40" selected>40</option>
-                                        <option value="35">35</option>
-                                        <option value="32">32</option>
-                                        <option value="30">30</option>
-                                        <option value="25">25</option>
-                                        <option value="20">20</option>
-                                    </select>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="bearing-height-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleCustomInput('bearing-height')">
+                                            <option value="65">65</option>
+                                            <option value="60">60</option>
+                                            <option value="55">55</option>
+                                            <option value="50">50</option>
+                                            <option value="45">45</option>
+                                            <option value="40">40</option>
+                                            <option value="35">35</option>
+                                            <option value="32">32</option>
+                                            <option value="30" selected>30</option>
+                                            <option value="25">25</option>
+                                            <option value="20">20</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="bearing-height-custom" placeholder="Custom (mm)" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateSteelGratingWeight()">
+                                    </div>
                                 </div>
+
+                                <!-- Tebal Bearing (T) -->
                                 <div>
                                     <label class="block text-manufacture font-bold mb-2">Tebal Bearing (T) - mm</label>
-                                    <div class="flex gap-2">
-                                        <select id="bearing-thickness-select" class="w-2/3 p-3 border-2 border-emerald-200 rounded-lg" onchange="updateBearingThickness()">
+                                    <div class="flex gap-2 items-start">
+                                        <select id="bearing-thickness-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleCustomInput('bearing-thickness')">
                                             <option value="5">5</option>
                                             <option value="4">4</option>
                                             <option value="3" selected>3</option>
                                             <option value="2">2</option>
                                             <option value="custom">Custom</option>
                                         </select>
-                                        <input type="number" id="bearing-thickness-custom" placeholder="Custom (mm)" class="w-1/3 p-3 border-2 border-emerald-200 rounded-lg hidden" oninput="calculateSteelGratingWeight()">
+                                        <input type="number" id="bearing-thickness-custom" placeholder="Custom (mm)" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateSteelGratingWeight()">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="grid md:grid-cols-2 gap-6">
+                                <!-- Jarak antar Bearing (P) -->
                                 <div>
                                     <label class="block text-manufacture font-bold mb-2">Jarak antar Bearing (P) - mm</label>
-                                    <select id="bearing-spacing" class="w-full p-3 border-2 border-emerald-200 rounded-lg" onchange="calculateSteelGratingWeight()">
-                                        <option value="30">30</option>
-                                        <option value="40" selected>40</option>
-                                        <option value="60">60</option>
-                                    </select>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="bearing-spacing-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleCustomInput('bearing-spacing')">
+                                            <option value="30">30</option>
+                                            <option value="40" selected>40</option>
+                                            <option value="60">60</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="bearing-spacing-custom" placeholder="Custom (mm)" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="onBearingSpacingChange()">
+                                    </div>
                                 </div>
+
+                                <!-- Jarak antar Crossbar (C) -->
                                 <div>
                                     <label class="block text-manufacture font-bold mb-2">Jarak antar Crossbar (C) - mm</label>
-                                    <select id="crossbar-spacing" class="w-full p-3 border-2 border-emerald-200 rounded-lg" onchange="calculateSteelGratingWeight()">
-                                        <option value="50">50</option>
-                                        <option value="100" selected>100</option>
-                                    </select>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="crossbar-spacing-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleCustomInput('crossbar-spacing')">
+                                            <option value="50">50</option>
+                                            <option value="100" selected>100</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="crossbar-spacing-custom" placeholder="Custom (mm)" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateSteelGratingWeight()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Diameter Crossbar (D) -->
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-manufacture font-bold mb-2">Diameter Crossbar (D) - mm</label>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="crossbar-diameter-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleCustomInput('crossbar-diameter')">
+                                            <option value="6">6</option>
+                                            <option value="10">10</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="crossbar-diameter-custom" placeholder="Custom (mm)" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateSteelGratingWeight()">
+                                    </div>
                                 </div>
                             </div>
 
@@ -376,7 +421,208 @@ app.get('/', (req, res) => {
                             <div class="bg-manufacture p-4 rounded-lg text-white">
                                 <p class="text-sm font-bold">Estimasi Harga per Unit:</p>
                                 <p class="text-2xl font-black" id="estimated-price-per-unit">Rp 0</p>
-                                <p class="text-xs opacity-75 mt-1">*Dibulatkan ke atas ribuan terdekat</p>
+                                <div class="text-xs opacity-75 mt-2 space-y-1">
+                                    <p>Harga sebelum PPN: <span id="estimated-price-before-ppn" class="font-semibold">Rp 0</span></p>
+                                    <p>PPN 11%: <span id="estimated-ppn-value" class="font-semibold">Rp 0</span></p>
+                                    <p class="text-yellow-200">*Dibulatkan ke atas ribuan terdekat</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel Stair Tread -->
+                        <div id="calc-stair-tread-panel" class="hidden space-y-6 mt-6">
+                            <!-- Input Panjang & Lebar -->
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div><label class="block text-manufacture font-bold mb-2">Panjang (mm)</label><input type="number" id="stair-length" value="1000" step="100" min="100" class="w-full p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()"></div>
+                                <div><label class="block text-manufacture font-bold mb-2">Lebar (mm)</label><input type="number" id="stair-width" value="500" step="50" min="50" class="w-full p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()"></div>
+                            </div>
+
+                            <!-- Parameter Bearing -->
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-manufacture font-bold mb-2">Tinggi Bearing (H) - mm</label>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="stair-bearing-height-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleStairCustomInput('bearing-height')">
+                                            <option value="65">65</option>
+                                            <option value="60">60</option>
+                                            <option value="55">55</option>
+                                            <option value="50">50</option>
+                                            <option value="45">45</option>
+                                            <option value="40">40</option>
+                                            <option value="35">35</option>
+                                            <option value="32">32</option>
+                                            <option value="30" selected>30</option>
+                                            <option value="25">25</option>
+                                            <option value="20">20</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="stair-bearing-height-custom" placeholder="Custom" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-manufacture font-bold mb-2">Tebal Bearing (T) - mm</label>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="stair-bearing-thickness-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleStairCustomInput('bearing-thickness')">
+                                            <option value="5">5</option>
+                                            <option value="4">4</option>
+                                            <option value="3" selected>3</option>
+                                            <option value="2">2</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="stair-bearing-thickness-custom" placeholder="Custom" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Jarak Bearing & Crossbar -->
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-manufacture font-bold mb-2">Jarak antar Bearing (P) - mm</label>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="stair-bearing-spacing-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleStairCustomInput('bearing-spacing')">
+                                            <option value="30">30</option>
+                                            <option value="40" selected>40</option>
+                                            <option value="60">60</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="stair-bearing-spacing-custom" placeholder="Custom" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-manufacture font-bold mb-2">Jarak antar Crossbar (C) - mm</label>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="stair-crossbar-spacing-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleStairCustomInput('crossbar-spacing')">
+                                            <option value="50">50</option>
+                                            <option value="100" selected>100</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="stair-crossbar-spacing-custom" placeholder="Custom" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Diameter Crossbar & Parameter End Plate -->
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-manufacture font-bold mb-2">Diameter Crossbar (D) - mm</label>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="stair-diameter-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleStairCustomInput('diameter')">
+                                            <option value="6">6</option>
+                                            <option value="10">10</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="stair-diameter-custom" placeholder="Custom" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()">
+                                    </div>
+                                </div>
+                                <div>
+                                    <!-- Placeholder untuk menjaga layout -->
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-manufacture font-bold mb-2">Tinggi End Plate (H) - mm</label>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="stair-endplate-height-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleStairCustomInput('endplate-height')">
+                                            <option value="65">65</option>
+                                            <option value="60">60</option>
+                                            <option value="55">55</option>
+                                            <option value="50">50</option>
+                                            <option value="45">45</option>
+                                            <option value="40">40</option>
+                                            <option value="35">35</option>
+                                            <option value="32">32</option>
+                                            <option value="30" selected>30</option>
+                                            <option value="25">25</option>
+                                            <option value="20">20</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="stair-endplate-height-custom" placeholder="Custom" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-manufacture font-bold mb-2">Tebal End Plate (T) - mm</label>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="stair-endplate-thickness-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleStairCustomInput('endplate-thickness')">
+                                            <option value="5">5</option>
+                                            <option value="4">4</option>
+                                            <option value="3" selected>3</option>
+                                            <option value="2">2</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="stair-endplate-thickness-custom" placeholder="Custom" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Checkered Plate -->
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-manufacture font-bold mb-2">Tinggi Checkered Plate (H) - mm</label>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="stair-checkered-height-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleStairCustomInput('checkered-height')">
+                                            <option value="65">65</option>
+                                            <option value="60">60</option>
+                                            <option value="55">55</option>
+                                            <option value="50">50</option>
+                                            <option value="45">45</option>
+                                            <option value="40">40</option>
+                                            <option value="35">35</option>
+                                            <option value="32">32</option>
+                                            <option value="30" selected>30</option>
+                                            <option value="25">25</option>
+                                            <option value="20">20</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="stair-checkered-height-custom" placeholder="Custom" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-manufacture font-bold mb-2">Tebal Checkered Plate (T) - mm</label>
+                                    <div class="flex gap-2 items-start">
+                                        <select id="stair-checkered-thickness-select" class="flex-1 p-3 border-2 border-emerald-200 rounded-lg" onchange="toggleStairCustomInput('checkered-thickness')">
+                                            <option value="5">5</option>
+                                            <option value="4">4</option>
+                                            <option value="3" selected>3</option>
+                                            <option value="2">2</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                        <input type="number" id="stair-checkered-thickness-custom" placeholder="Custom" class="hidden w-32 p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Kondisi & Jenis Barang -->
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div><label class="block text-manufacture font-bold mb-2">Kondisi Barang</label><select id="stair-coating" class="w-full p-3 border-2 border-emerald-200 rounded-lg" onchange="calculateStairTreadWeight()"><option value="galvanis">Galvanis</option><option value="non-galvanis">Tanpa Galvanis</option></select></div>
+                                <div><label class="block text-manufacture font-bold mb-2">Jenis Barang</label><select id="stair-type" class="w-full p-3 border-2 border-emerald-200 rounded-lg" onchange="calculateStairTreadWeight()"><option value="serrated">Serrated</option><option value="polos">Polos</option></select></div>
+                            </div>
+
+                            <div><label class="block text-manufacture font-bold mb-2">Jumlah Unit</label><input type="number" id="stair-quantity" value="1" min="1" class="w-full p-3 border-2 border-emerald-200 rounded-lg" oninput="calculateStairTreadWeight()"></div>
+
+                            <!-- Detail Perhitungan Stair Tread -->
+                            <div class="bg-emerald-50 p-4 rounded-lg space-y-2">
+                                <p class="text-sm text-slate-600 font-bold">Detail Perhitungan Stair Tread:</p>
+                                <p class="text-xs text-slate-600">Jumlah Bearing: <strong id="stair-jumlah-bearing" class="text-manufacture">0</strong> buah</p>
+                                <p class="text-xs text-slate-600">Berat Bearing: <strong id="stair-berat-bearing" class="text-manufacture">0</strong> kg</p>
+                                <p class="text-xs text-slate-600">Jumlah Crossbar: <strong id="stair-jumlah-crossbar" class="text-manufacture">0</strong> buah</p>
+                                <p class="text-xs text-slate-600">Berat Crossbar: <strong id="stair-berat-crossbar" class="text-manufacture">0</strong> kg</p>
+                                <p class="text-xs text-slate-600">Berat End Plate: <strong id="stair-berat-endplate" class="text-manufacture">0</strong> kg</p>
+                                <p class="text-xs text-slate-600">Berat Checkered Plate: <strong id="stair-berat-checkered" class="text-manufacture">0</strong> kg</p>
+                                <div class="border-t border-emerald-200 pt-2 mt-2">
+                                    <p class="text-sm font-bold text-manufacture">Berat 1 Stair Tread: <strong id="stair-calculated-weight" class="text-manufacture text-lg">0</strong> kg</p>
+                                </div>
+                            </div>
+
+                            <!-- Estimasi Harga Stair Tread -->
+                            <div class="bg-manufacture p-4 rounded-lg text-white">
+                                <p class="text-sm font-bold">Estimasi Harga per Unit:</p>
+                                <p class="text-2xl font-black" id="stair-estimated-price">Rp 0</p>
+                                <div class="text-xs opacity-75 mt-2 space-y-1">
+                                    <p>Harga sebelum PPN: <span id="stair-price-before-ppn" class="font-semibold">Rp 0</span></p>
+                                    <p>PPN 11%: <span id="stair-ppn-value" class="font-semibold">Rp 0</span></p>
+                                    <p class="text-yellow-200">*Dibulatkan ke atas ribuan terdekat</p>
+                                </div>
                             </div>
                         </div>
 
@@ -483,26 +729,107 @@ app.get('/', (req, res) => {
 
         <script>
         // ==================== KONSTANTA ====================
-        const HARGA_BESI_PER_KG = 13068;
-        const HARGA_GALVANIS_PER_KG = 8000;
+        const HARGA_BESI_STEELGRATING_PER_KG = 13068;
+        const HARGA_GALVANIS_STEELGRATING_PER_KG = 8000;
+        const HARGA_BESI_STAIR_TREAD_PER_KG = 32068;
         const BASE_PRICE = 75000;
+        const PPN = 0.11;
         
         // ==================== VARIABEL GLOBAL ====================
         let cart = [];
         let autoSlideInterval;
         const products = ['grating', 'guardrail', 'pole'];
         let currentIndex = 0;
-        
+
+        // ==================== FUNGSI UPDATE GAMBAR KALKULATOR ====================
+        function updateCalculatorImage(subCategory) {
+            const imageContainer = document.getElementById('calculator-image-container');
+            const calculatorImage = document.getElementById('calculator-image');
+            
+            if (!calculatorImage) return;
+            
+            // Selalu tampilkan container gambar terlebih dahulu
+            imageContainer.classList.remove('hidden');
+            
+            switch(subCategory) {
+                case 'standard':
+                    calculatorImage.src = '/calculator-SG.png';
+                    calculatorImage.alt = 'Steel Grating Calculator';
+                    break;
+                case 'stair-tread':
+                    calculatorImage.src = '/calculator-ST.png';
+                    calculatorImage.alt = 'Stair Tread Calculator';
+                    break;
+                case 'sgt':
+                    calculatorImage.src = '/calculator-ST.png';
+                    calculatorImage.alt = 'SGT Calculator';
+                    break;
+                case 'sgu':
+                    calculatorImage.src = '/calculator-ST.png';
+                    calculatorImage.alt = 'SGU Calculator';
+                    break;
+                default:
+                    imageContainer.classList.add('hidden');
+            }
+        }
+
         // ==================== FUNGSI STEEL GRATING ====================
-        function updateBearingThickness() {
-            const select = document.getElementById('bearing-thickness-select');
-            const customInput = document.getElementById('bearing-thickness-custom');
+
+        // Fungsi toggle custom input (muncul/sembunyi saat pilih custom)
+        function toggleCustomInput(type) {
+            let selectId, customId;
+            
+            switch(type) {
+                case 'bearing-height':
+                    selectId = 'bearing-height-select';
+                    customId = 'bearing-height-custom';
+                    break;
+                case 'bearing-thickness':
+                    selectId = 'bearing-thickness-select';
+                    customId = 'bearing-thickness-custom';
+                    break;
+                case 'bearing-spacing':
+                    selectId = 'bearing-spacing-select';
+                    customId = 'bearing-spacing-custom';
+                    break;
+                case 'crossbar-spacing':
+                    selectId = 'crossbar-spacing-select';
+                    customId = 'crossbar-spacing-custom';
+                    break;
+                case 'crossbar-diameter':
+                    selectId = 'crossbar-diameter-select';
+                    customId = 'crossbar-diameter-custom';
+                    break;
+                default:
+                    return;
+            }
+            
+            const select = document.getElementById(selectId);
+            const customInput = document.getElementById(customId);
+            
             if (select.value === 'custom') {
                 customInput.classList.remove('hidden');
+                customInput.focus();
             } else {
                 customInput.classList.add('hidden');
+                customInput.value = '';
             }
-            calculateSteelGratingWeight();
+            
+            // Panggil fungsi perhitungan yang sesuai
+            if (type === 'bearing-spacing') {
+                onBearingSpacingChange();
+            } else {
+                calculateSteelGratingWeight();
+            }
+        }
+
+        // Update fungsi getter untuk custom input
+        function getBearingHeight() {
+            const select = document.getElementById('bearing-height-select');
+            if (select.value === 'custom') {
+                return parseFloat(document.getElementById('bearing-height-custom').value) || 30;
+            }
+            return parseFloat(select.value);
         }
 
         function getBearingThickness() {
@@ -513,20 +840,71 @@ app.get('/', (req, res) => {
             return parseFloat(select.value);
         }
 
+        function getBearingSpacing() {
+            const select = document.getElementById('bearing-spacing-select');
+            if (select.value === 'custom') {
+                return parseFloat(document.getElementById('bearing-spacing-custom').value) || 40;
+            }
+            return parseFloat(select.value);
+        }
+
+        function getCrossbarSpacing() {
+            const select = document.getElementById('crossbar-spacing-select');
+            if (select.value === 'custom') {
+                return parseFloat(document.getElementById('crossbar-spacing-custom').value) || 100;
+            }
+            return parseFloat(select.value);
+        }
+
+        function getCrossbarDiameter() {
+            const select = document.getElementById('crossbar-diameter-select');
+            if (select.value === 'custom') {
+                return parseFloat(document.getElementById('crossbar-diameter-custom').value) || 6;
+            }
+            return parseFloat(select.value);
+        }
+
+        // Fungsi untuk validasi crossbar spacing saat P berubah
+        function onBearingSpacingChange() {
+            const jarakBearing = getBearingSpacing();
+            const crossbarSelect = document.getElementById('crossbar-spacing-select');
+            const crossbarCustom = document.getElementById('crossbar-spacing-custom');
+            
+            // Jika P = 60, maka rekomendasi C hanya 50 (tapi tetap bisa custom)
+            if (jarakBearing == 60) {
+                // Tampilkan rekomendasi tapi tidak memaksa
+                const currentC = getCrossbarSpacing();
+                if (currentC != 50 && crossbarSelect.value !== 'custom') {
+                    // Optional: tampilkan warning
+                    console.log('Rekomendasi Jarak Crossbar (C) = 50mm untuk P = 60mm');
+                }
+            }
+            
+            calculateSteelGratingWeight();
+        }
+
         function calculateSteelGratingWeight() {
+            // Ambil nilai input dengan fungsi getter
             const panjang = parseFloat(document.getElementById('grating-length').value) || 0;
             const lebar = parseFloat(document.getElementById('grating-width').value) || 0;
-            const tinggiBearing = parseFloat(document.getElementById('bearing-height').value) || 40;
-            const tebalBearing = getBearingThickness();
-            const jarakBearing = parseFloat(document.getElementById('bearing-spacing').value) || 40;
-            const jarakCrossbar = parseFloat(document.getElementById('crossbar-spacing').value) || 100;
+            const tinggiBearing = getBearingHeight();        
+            const tebalBearing = getBearingThickness();     
+            const jarakBearing = getBearingSpacing();       
+            const jarakCrossbar = getCrossbarSpacing();     
+            const diameterCrossbar = getCrossbarDiameter(); 
             
             if (panjang <= 0 || lebar <= 0) {
                 document.getElementById('calculated-weight').innerText = '0';
-                return 0;
+                return {
+                    totalBerat: 0,
+                    hargaSebelumPPN: 0,
+                    nilaiPPN: 0,
+                    hargaSetelahPPN: 0,
+                    hargaBulat: 0
+                };
             }
             
-            // 1. Jumlah Bearing = ROUNDDOWN((Lebar - Tebal Bearing) / Jarak antar Bearing, 0) + 1
+            // 1. Jumlah Bearing = CEIL((Lebar - Tebal Bearing) / Jarak antar Bearing, 0) + 1
             const jumlahBearing = Math.ceil((lebar - tebalBearing) / jarakBearing) + 1;
             
             // 2. Volume Bearing = Tinggi Bearing * Tebal Bearing * Panjang
@@ -535,8 +913,8 @@ app.get('/', (req, res) => {
             // 3. Berat Bearing = jumlahBearing * volumeBearing * 10^-9 * 7850
             const beratBearing = jumlahBearing * volumeBearing * Math.pow(10, -9) * 7850;
             
-            // 4. Volume Crossbar = 6^2 * Lebar = 36 * Lebar
-            const volumeCrossbar = 36 * lebar;
+            // 4. Volume Crossbar = D^2 * Lebar
+            const volumeCrossbar = Math.pow(diameterCrossbar, 2) * lebar;
             
             // 5. Jumlah Crossbar = ROUNDUP(Panjang / Jarak antar Crossbar, 0)
             const jumlahCrossbar = Math.ceil(panjang / jarakCrossbar);
@@ -572,22 +950,254 @@ app.get('/', (req, res) => {
             
             if (kondisi === 'galvanis') {
                 if (jenis === 'serrated') {
-                    hargaPerUnit = (HARGA_BESI_PER_KG * totalBerat + HARGA_GALVANIS_PER_KG * totalBerat) * quantity;
+                    hargaPerUnit = (HARGA_BESI_STEELGRATING_PER_KG * totalBerat + HARGA_GALVANIS_STEELGRATING_PER_KG * totalBerat);
                 } else {
-                    hargaPerUnit = ((HARGA_BESI_PER_KG - 500) * totalBerat + HARGA_GALVANIS_PER_KG * totalBerat) * quantity;
+                    hargaPerUnit = ((HARGA_BESI_STEELGRATING_PER_KG - 500) * totalBerat + HARGA_GALVANIS_STEELGRATING_PER_KG * totalBerat);
                 }
             } else {
                 if (jenis === 'serrated') {
-                    hargaPerUnit = (HARGA_BESI_PER_KG * totalBerat) * quantity;
+                    hargaPerUnit = (HARGA_BESI_STEELGRATING_PER_KG * totalBerat);
                 } else {
-                    hargaPerUnit = ((HARGA_BESI_PER_KG - 500) * totalBerat) * quantity;
+                    hargaPerUnit = ((HARGA_BESI_STEELGRATING_PER_KG - 500) * totalBerat);
                 }
             }
             
-            const hargaBulat = Math.ceil(hargaPerUnit / 1000) * 1000;
-            document.getElementById('estimated-price-per-unit').innerHTML = 'Rp ' + hargaBulat.toLocaleString('id-ID');
+            // Kalikan dengan jumlah unit (HANYA SEKALI)
+            hargaPerUnit = hargaPerUnit * quantity;
             
-            return totalBerat;
+            // Tambahkan PPN 11%
+            const hargaSebelumPPN = hargaPerUnit;
+            const nilaiPPN = hargaSebelumPPN * PPN;
+            const hargaSetelahPPN = hargaSebelumPPN + nilaiPPN;
+            
+            // Pembulatan ke atas ribuan
+            const hargaBulat = Math.ceil(hargaSetelahPPN / 1000) * 1000;
+            
+            // Tampilkan harga
+            document.getElementById('estimated-price-per-unit').innerHTML = 'Rp ' + hargaBulat.toLocaleString('id-ID');
+            document.getElementById('estimated-price-before-ppn').innerHTML = 'Rp ' + Math.ceil(hargaSebelumPPN).toLocaleString('id-ID');
+            document.getElementById('estimated-ppn-value').innerHTML = 'Rp ' + Math.ceil(nilaiPPN).toLocaleString('id-ID');
+            
+            return {
+                totalBerat: totalBerat,
+                hargaSebelumPPN: hargaSebelumPPN,
+                nilaiPPN: nilaiPPN,
+                hargaSetelahPPN: hargaSetelahPPN,
+                hargaBulat: hargaBulat
+            };
+        }
+
+        // ==================== FUNGSI STAIR TREAD ====================
+
+        // Fungsi toggle custom input untuk stair tread
+        function toggleStairCustomInput(type) {
+            let selectId, customId;
+            
+            switch(type) {
+                case 'bearing-height':
+                    selectId = 'stair-bearing-height-select';
+                    customId = 'stair-bearing-height-custom';
+                    break;
+                case 'bearing-thickness':
+                    selectId = 'stair-bearing-thickness-select';
+                    customId = 'stair-bearing-thickness-custom';
+                    break;
+                case 'bearing-spacing':
+                    selectId = 'stair-bearing-spacing-select';
+                    customId = 'stair-bearing-spacing-custom';
+                    break;
+                case 'crossbar-spacing':
+                    selectId = 'stair-crossbar-spacing-select';
+                    customId = 'stair-crossbar-spacing-custom';
+                    break;
+                case 'diameter':
+                    selectId = 'stair-diameter-select';
+                    customId = 'stair-diameter-custom';
+                    break;
+                case 'endplate-height':        // BARU
+                    selectId = 'stair-endplate-height-select';
+                    customId = 'stair-endplate-height-custom';
+                    break;
+                case 'endplate-thickness':
+                    selectId = 'stair-endplate-thickness-select';
+                    customId = 'stair-endplate-thickness-custom';
+                    break;
+                case 'checkered-height':
+                    selectId = 'stair-checkered-height-select';
+                    customId = 'stair-checkered-height-custom';
+                    break;
+                case 'checkered-thickness':
+                    selectId = 'stair-checkered-thickness-select';
+                    customId = 'stair-checkered-thickness-custom';
+                    break;
+                default:
+                    return;
+            }
+            
+            const select = document.getElementById(selectId);
+            const customInput = document.getElementById(customId);
+            
+            if (select && select.value === 'custom') {
+                customInput.classList.remove('hidden');
+                customInput.focus();
+            } else if (customInput) {
+                customInput.classList.add('hidden');
+                customInput.value = '';
+            }
+            
+            calculateStairTreadWeight();
+        }
+
+        // Getter functions untuk stair tread
+        function getStairBearingHeight() {
+            const select = document.getElementById('stair-bearing-height-select');
+            if (select && select.value === 'custom') {
+                return parseFloat(document.getElementById('stair-bearing-height-custom').value) || 30;
+            }
+            return select ? parseFloat(select.value) : 30;
+        }
+
+        function getStairBearingThickness() {
+            const select = document.getElementById('stair-bearing-thickness-select');
+            if (select && select.value === 'custom') {
+                return parseFloat(document.getElementById('stair-bearing-thickness-custom').value) || 3;
+            }
+            return select ? parseFloat(select.value) : 3;
+        }
+
+        function getStairBearingSpacing() {
+            const select = document.getElementById('stair-bearing-spacing-select');
+            if (select && select.value === 'custom') {
+                return parseFloat(document.getElementById('stair-bearing-spacing-custom').value) || 40;
+            }
+            return select ? parseFloat(select.value) : 40;
+        }
+
+        function getStairCrossbarSpacing() {
+            const select = document.getElementById('stair-crossbar-spacing-select');
+            if (select && select.value === 'custom') {
+                return parseFloat(document.getElementById('stair-crossbar-spacing-custom').value) || 100;
+            }
+            return select ? parseFloat(select.value) : 100;
+        }
+
+        function getStairDiameter() {
+            const select = document.getElementById('stair-diameter-select');
+            if (select && select.value === 'custom') {
+                return parseFloat(document.getElementById('stair-diameter-custom').value) || 6;
+            }
+            return select ? parseFloat(select.value) : 6;
+        }
+
+        function getStairEndplateThickness() {
+            const select = document.getElementById('stair-endplate-thickness-select');
+            if (select && select.value === 'custom') {
+                return parseFloat(document.getElementById('stair-endplate-thickness-custom').value) || 3;
+            }
+            return select ? parseFloat(select.value) : 3;
+        }
+
+        function getStairEndplateHeight() {
+            const select = document.getElementById('stair-endplate-height-select');
+            if (select && select.value === 'custom') {
+                return parseFloat(document.getElementById('stair-endplate-height-custom').value) || 30;
+            }
+            return select ? parseFloat(select.value) : 30;
+        }
+
+        function getStairCheckeredHeight() {
+            const select = document.getElementById('stair-checkered-height-select');
+            if (select && select.value === 'custom') {
+                return parseFloat(document.getElementById('stair-checkered-height-custom').value) || 3;
+            }
+            return select ? parseFloat(select.value) : 3;
+        }
+
+        function getStairCheckeredThickness() {
+            const select = document.getElementById('stair-checkered-thickness-select');
+            if (select && select.value === 'custom') {
+                return parseFloat(document.getElementById('stair-checkered-thickness-custom').value) || 3;
+            }
+            return select ? parseFloat(select.value) : 3;
+        }
+
+        // Fungsi perhitungan berat Stair Tread
+        function calculateStairTreadWeight() {
+            const panjang = parseFloat(document.getElementById('stair-length').value) || 0;
+            const lebar = parseFloat(document.getElementById('stair-width').value) || 0;
+            const tinggiBearing = getStairBearingHeight();
+            const tebalBearing = getStairBearingThickness();
+            const jarakBearing = getStairBearingSpacing();
+            const jarakCrossbar = getStairCrossbarSpacing();
+            const diameterCrossbar = getStairDiameter();
+            const tinggiEndPlate = getStairEndplateHeight();
+            const tebalEndPlate = getStairEndplateThickness();
+            const tinggiCheckered = getStairCheckeredHeight();
+            const tebalCheckered = getStairCheckeredThickness();
+            
+            // Hitung berat (opsional, hanya untuk display)
+            let totalBerat = 0;
+            
+            if (panjang > 0 && lebar > 0) {
+                const jumlahBearing = Math.ceil((lebar - tebalBearing) / jarakBearing);
+                const volumeBearing = tinggiBearing * tebalBearing * panjang;
+                const beratBearing = jumlahBearing * volumeBearing * Math.pow(10, -9) * 7850;
+                
+                const volumeCrossbar = 0.25 * Math.PI * Math.pow(diameterCrossbar, 2) * lebar;
+                const jumlahCrossbar = Math.ceil(panjang / jarakCrossbar);
+                const beratCrossbar = volumeCrossbar * jumlahCrossbar * Math.pow(10, -9) * 7850;
+                
+                const volumeEndPlate = tinggiEndPlate * tebalEndPlate * 2 * lebar;
+                const beratEndPlate = volumeEndPlate * Math.pow(10, -9) * 7850;
+                
+                const volumeCheckered = tinggiCheckered * tebalCheckered * panjang * 2;
+                const beratCheckered = volumeCheckered * Math.pow(10, -9) * 7850;
+                
+                totalBerat = beratBearing + beratCrossbar + beratEndPlate + beratCheckered;
+                
+                // Update display
+                document.getElementById('stair-jumlah-bearing').innerText = jumlahBearing;
+                document.getElementById('stair-berat-bearing').innerText = beratBearing.toFixed(2);
+                document.getElementById('stair-jumlah-crossbar').innerText = jumlahCrossbar;
+                document.getElementById('stair-berat-crossbar').innerText = beratCrossbar.toFixed(2);
+                document.getElementById('stair-berat-endplate').innerText = beratEndPlate.toFixed(2);
+                document.getElementById('stair-berat-checkered').innerText = beratCheckered.toFixed(2);
+                document.getElementById('stair-calculated-weight').innerText = totalBerat.toFixed(2);
+            }
+            
+            // ============ PERHITUNGAN HARGA STAIR TREAD ============
+            const quantity = parseInt(document.getElementById('stair-quantity').value) || 1;
+            
+            // Harga per unit FIXED Rp 32.068
+            const hargaPerUnit = HARGA_BESI_STAIR_TREAD_PER_KG * totalBerat;
+            const hargaSebelumPPN = hargaPerUnit * quantity;
+            const nilaiPPN = hargaSebelumPPN * PPN;
+            const hargaSetelahPPN = hargaSebelumPPN + nilaiPPN;
+            const hargaBulat = Math.ceil(hargaSetelahPPN / 1000) * 1000;
+            
+            // TAMPILKAN KE HTML
+            const estimatedPriceEl = document.getElementById('stair-estimated-price');
+            const priceBeforePpnEl = document.getElementById('stair-price-before-ppn');
+            const ppnValueEl = document.getElementById('stair-ppn-value');
+            
+            if (estimatedPriceEl) estimatedPriceEl.innerHTML = 'Rp ' + hargaBulat.toLocaleString('id-ID');
+            if (priceBeforePpnEl) priceBeforePpnEl.innerHTML = 'Rp ' + Math.ceil(hargaSebelumPPN).toLocaleString('id-ID');
+            if (ppnValueEl) ppnValueEl.innerHTML = 'Rp ' + Math.ceil(nilaiPPN).toLocaleString('id-ID');
+            
+            // DEBUG: cek nilai di console
+            console.log('Stair Tread - Harga/Unit:', hargaPerUnit);
+            console.log('Stair Tread - Quantity:', quantity);
+            console.log('Stair Tread - Harga sebelum PPN:', hargaSebelumPPN);
+            console.log('Stair Tread - PPN:', nilaiPPN);
+            console.log('Stair Tread - Harga setelah PPN (bulat):', hargaBulat);
+            
+            return {
+                totalBerat: totalBerat,
+                hargaSebelumPPN: hargaSebelumPPN,
+                nilaiPPN: nilaiPPN,
+                hargaSetelahPPN: hargaSetelahPPN,
+                hargaBulat: hargaBulat
+            };
         }
         
         // ==================== FUNGSI POLE & GUARDRAIL ====================
@@ -654,90 +1264,264 @@ app.get('/', (req, res) => {
 
         function toggleCalcPanel() {
             const productType = document.getElementById('calc-product-type').value;
+            const subCategory = document.getElementById('calc-sub-category').value;
             const gratingPanel = document.getElementById('calc-grating-panel');
+            const stairTreadPanel = document.getElementById('calc-stair-tread-panel');
             const otherPanel = document.getElementById('calc-other-panel');
             const calculatorImage = document.getElementById('calculator-image-container');
             
+            // Sembunyikan semua panel terlebih dahulu
+            if (gratingPanel) gratingPanel.classList.add('hidden');
+            if (stairTreadPanel) stairTreadPanel.classList.add('hidden');
+            if (otherPanel) otherPanel.classList.add('hidden');
+            
             if (productType === 'grating') {
-                gratingPanel.classList.remove('hidden');
-                otherPanel.classList.add('hidden');
-                // Tampilkan gambar calculator untuk Steel Grating
-                if (calculatorImage) calculatorImage.classList.remove('hidden');
-                calculateSteelGratingWeight();
-            } else {
-                gratingPanel.classList.add('hidden');
-                otherPanel.classList.remove('hidden');
-                // Sembunyikan gambar calculator untuk Pole dan Guardrail
+                // Update gambar terlebih dahulu
+                updateCalculatorImage(subCategory);
+                
+                // Cek sub kategori
+                if (subCategory === 'standard') {
+                    // Steel Grating Standard
+                    if (gratingPanel) gratingPanel.classList.remove('hidden');
+                    calculateSteelGratingWeight();
+                } 
+                else if (subCategory === 'stair-tread') {
+                    // Stair Tread - TAMPILKAN GAMBAR
+                    if (stairTreadPanel) stairTreadPanel.classList.remove('hidden');
+                    // Jangan sembunyikan gambar, biarkan updateCalculatorImage yang mengatur
+                    calculateStairTreadWeight();
+                }
+                else if (subCategory === 'sgt') {
+                    // SGT - belum dibuat
+                    alert('Maaf, fitur untuk SGT sedang dalam pengembangan');
+                    return;
+                }
+                else if (subCategory === 'sgu') {
+                    // SGU - belum dibuat
+                    alert('Maaf, fitur untuk SGU sedang dalam pengembangan');
+                    return;
+                }
+            } 
+            else if (productType === 'pole') {
+                // Pole - sembunyikan gambar
                 if (calculatorImage) calculatorImage.classList.add('hidden');
+                if (otherPanel) otherPanel.classList.remove('hidden');
                 updateOtherEstimate();
+            } 
+            else if (productType === 'guardrail') {
+                // Guard Rail - sembunyikan gambar
+                if (calculatorImage) calculatorImage.classList.add('hidden');
+                if (otherPanel) otherPanel.classList.remove('hidden');
+                updateOtherEstimate();
+            }
+        }
+
+        // Fungsi untuk update judul panel Stair Tread
+        function updatePanelTitle(title) {
+            const panelHeader = document.querySelector('#calc-stair-tread-panel .bg-manufacture p:first-child');
+            if (panelHeader) {
+                panelHeader.innerHTML = '<i class="fas fa-calculator mr-3"></i> Kalkulator Estimasi Harga - ' + title;
+            }
+        }
+
+        // Fungsi untuk mengaktifkan/nonaktifkan sub kategori berdasarkan produk
+        function toggleSubCategory() {
+            const productType = document.getElementById('calc-product-type').value;
+            const subCategorySelect = document.getElementById('calc-sub-category');
+            
+            if (productType === 'grating') {
+                subCategorySelect.disabled = false;
+            } else {
+                subCategorySelect.disabled = true;
+                // Set ke default
+                subCategorySelect.value = 'standard';
             }
         }
 
         // ==================== FUNGSI KERANJANG ====================
         window.addToCartCalc = function() {
             const productType = document.getElementById('calc-product-type').value;
+            const subCategory = document.getElementById('calc-sub-category').value;
             
             if (productType === 'grating') {
-                const panjang = parseFloat(document.getElementById('grating-length').value);
-                const lebar = parseFloat(document.getElementById('grating-width').value);
-                const kondisi = document.getElementById('grating-coating').value;
-                const jenis = document.getElementById('grating-type').value;
-                const quantity = parseInt(document.getElementById('grating-quantity').value);
-                const tinggiBearing = document.getElementById('bearing-height').value;
-                const tebalBearing = getBearingThickness();
-                const jarakBearing = document.getElementById('bearing-spacing').value;
-                const jarakCrossbar = document.getElementById('crossbar-spacing').value;
-                const totalBerat = calculateSteelGratingWeight();
-                const hargaPerUnit = parseFloat(document.getElementById('estimated-price-per-unit').innerText.replace(/[^0-9]/g, '')) || 0;
-                const subtotal = hargaPerUnit * quantity;
-                
-                if (!panjang || !lebar || panjang <= 0 || lebar <= 0) {
-                    alert('Masukkan Panjang dan Lebar yang valid');
+                if (subCategory === 'standard') {
+                    // Steel Grating Standard
+                    const panjang = parseFloat(document.getElementById('grating-length').value);
+                    const lebar = parseFloat(document.getElementById('grating-width').value);
+                    const kondisi = document.getElementById('grating-coating').value;
+                    const jenis = document.getElementById('grating-type').value;
+                    const quantity = parseInt(document.getElementById('grating-quantity').value);
+                    
+                    const tinggiBearing = getBearingHeight();
+                    const tebalBearing = getBearingThickness();
+                    const jarakBearing = getBearingSpacing();
+                    const jarakCrossbar = getCrossbarSpacing();
+                    const diameterCrossbar = getCrossbarDiameter();
+                    
+                    const result = calculateSteelGratingWeight();
+                    const totalBerat = result.totalBerat;
+                    const hargaPerUnit = result.hargaBulat;
+                    const subtotal = hargaPerUnit * quantity;
+                    
+                    if (!panjang || !lebar || panjang <= 0 || lebar <= 0) {
+                        alert('Masukkan Panjang dan Lebar yang valid');
+                        return;
+                    }
+                    
+                    cart.push({
+                        id: Date.now(),
+                        type: 'Steel Grating',
+                        panjang: panjang,
+                        lebar: lebar,
+                        kondisi: kondisi === 'galvanis' ? 'Galvanis' : 'Tanpa Galvanis',
+                        jenis: jenis === 'serrated' ? 'Serrated' : 'Polos',
+                        quantity: quantity,
+                        beratTotal: totalBerat,
+                        hargaPerUnit: hargaPerUnit,
+                        subtotal: subtotal,
+                        hargaSebelumPPN: result.hargaSebelumPPN,
+                        nilaiPPN: result.nilaiPPN,
+                        tinggiBearing: tinggiBearing,
+                        tebalBearing: tebalBearing,
+                        jarakBearing: jarakBearing,
+                        jarakCrossbar: jarakCrossbar,
+                        diameterCrossbar: diameterCrossbar
+                    });
+                    
+                    renderCart();
+                    alert('Item Steel Grating berhasil ditambahkan ke keranjang!');
+                } 
+                else if (subCategory === 'stair-tread') {
+                    // Stair Tread
+                    const panjang = parseFloat(document.getElementById('stair-length').value);
+                    const lebar = parseFloat(document.getElementById('stair-width').value);
+                    const kondisi = document.getElementById('stair-coating').value;
+                    const jenis = document.getElementById('stair-type').value;
+                    const quantity = parseInt(document.getElementById('stair-quantity').value);
+                    
+                    const tinggiBearing = getStairBearingHeight();
+                    const tebalBearing = getStairBearingThickness();
+                    const jarakBearing = getStairBearingSpacing();
+                    const jarakCrossbar = getStairCrossbarSpacing();
+                    const diameterCrossbar = getStairDiameter();
+                    const tinggiEndPlate = getStairEndplateHeight();
+                    const tebalEndPlate = getStairEndplateThickness();
+                    const tinggiCheckered = getStairCheckeredHeight();
+                    const tebalCheckered = getStairCheckeredThickness();
+                    
+                    const result = calculateStairTreadWeight();
+                    
+                    if (!result) {
+                        alert('Terjadi kesalahan perhitungan');
+                        return;
+                    }
+                    
+                    const hargaPerUnit = result.hargaBulat;
+                    const subtotal = hargaPerUnit * quantity;
+                    
+                    if (!panjang || !lebar || panjang <= 0 || lebar <= 0) {
+                        alert('Masukkan Panjang dan Lebar yang valid');
+                        return;
+                    }
+                    
+                    cart.push({
+                        id: Date.now(),
+                        type: 'Stair Tread',
+                        panjang: panjang,
+                        lebar: lebar,
+                        kondisi: kondisi === 'galvanis' ? 'Galvanis' : 'Tanpa Galvanis',
+                        jenis: jenis === 'serrated' ? 'Serrated' : 'Polos',
+                        quantity: quantity,
+                        beratTotal: result.totalBerat,
+                        hargaPerUnit: hargaPerUnit,
+                        subtotal: subtotal,
+                        hargaSebelumPPN: result.hargaSebelumPPN,
+                        nilaiPPN: result.nilaiPPN,
+                        tinggiBearing: tinggiBearing,
+                        tebalBearing: tebalBearing,
+                        jarakBearing: jarakBearing,
+                        jarakCrossbar: jarakCrossbar,
+                        diameterCrossbar: diameterCrossbar,
+                        tinggiEndPlate: tinggiEndPlate,
+                        tebalEndPlate: tebalEndPlate,
+                        tinggiCheckered: tinggiCheckered,
+                        tebalCheckered: tebalCheckered
+                    });
+                    
+                    renderCart();
+                    alert('Item Stair Tread berhasil ditambahkan ke keranjang!');
+                }
+                else if (subCategory === 'sgt') {
+                    alert('Maaf, fitur untuk SGT sedang dalam pengembangan');
                     return;
                 }
-                
-                cart.push({
-                    id: Date.now(),
-                    type: 'Steel Grating',
-                    panjang: panjang,
-                    lebar: lebar,
-                    kondisi: kondisi === 'galvanis' ? 'Galvanis' : 'Tanpa Galvanis',
-                    jenis: jenis === 'serrated' ? 'Serrated' : 'Polos',
-                    quantity: quantity,
-                    beratTotal: totalBerat,
-                    hargaPerUnit: hargaPerUnit,
-                    subtotal: subtotal,
-                    tinggiBearing: tinggiBearing,
-                    tebalBearing: tebalBearing,
-                    jarakBearing: jarakBearing,
-                    jarakCrossbar: jarakCrossbar
-                });
-            } else {
+                else if (subCategory === 'sgu') {
+                    alert('Maaf, fitur untuk SGU sedang dalam pengembangan');
+                    return;
+                }
+            } 
+            else if (productType === 'pole') {
+                // Pole
                 const sizeCoeff = parseFloat(document.getElementById('size-coefficient').value);
                 const weight = parseFloat(document.getElementById('weight').value);
                 const quantity = parseInt(document.getElementById('other-quantity').value);
-                const productName = productType === 'pole' ? 'Pole/Tiang' : 'Guard Rail';
                 
                 if (!sizeCoeff || sizeCoeff <= 0 || !weight || weight <= 0) {
                     alert('Masukkan koefisien ukuran dan berat yang valid');
                     return;
                 }
                 
-                const hargaPerUnit = BASE_PRICE * sizeCoeff * weight;
-                const subtotal = hargaPerUnit * quantity;
+                const hargaSebelumPPN = BASE_PRICE * sizeCoeff * weight * quantity;
+                const nilaiPPN = hargaSebelumPPN * PPN;
+                const hargaSetelahPPN = hargaSebelumPPN + nilaiPPN;
+                const hargaBulat = Math.ceil(hargaSetelahPPN / 1000) * 1000;
                 
                 cart.push({
                     id: Date.now(),
-                    type: productName,
+                    type: 'Pole / Tiang',
                     koefisien: sizeCoeff,
                     berat: weight,
                     quantity: quantity,
-                    hargaPerUnit: hargaPerUnit,
-                    subtotal: subtotal
+                    hargaPerUnit: hargaBulat,
+                    hargaSebelumPPN: hargaSebelumPPN,
+                    nilaiPPN: nilaiPPN,
+                    subtotal: hargaBulat
                 });
+                
+                renderCart();
+                alert('Item Pole berhasil ditambahkan ke keranjang!');
+            } 
+            else if (productType === 'guardrail') {
+                // Guard Rail
+                const sizeCoeff = parseFloat(document.getElementById('size-coefficient').value);
+                const weight = parseFloat(document.getElementById('weight').value);
+                const quantity = parseInt(document.getElementById('other-quantity').value);
+                
+                if (!sizeCoeff || sizeCoeff <= 0 || !weight || weight <= 0) {
+                    alert('Masukkan koefisien ukuran dan berat yang valid');
+                    return;
+                }
+                
+                const hargaSebelumPPN = BASE_PRICE * sizeCoeff * weight * quantity;
+                const nilaiPPN = hargaSebelumPPN * PPN;
+                const hargaSetelahPPN = hargaSebelumPPN + nilaiPPN;
+                const hargaBulat = Math.ceil(hargaSetelahPPN / 1000) * 1000;
+                
+                cart.push({
+                    id: Date.now(),
+                    type: 'Guard Rail',
+                    koefisien: sizeCoeff,
+                    berat: weight,
+                    quantity: quantity,
+                    hargaPerUnit: hargaBulat,
+                    hargaSebelumPPN: hargaSebelumPPN,
+                    nilaiPPN: nilaiPPN,
+                    subtotal: hargaBulat
+                });
+                
+                renderCart();
+                alert('Item Guard Rail berhasil ditambahkan ke keranjang!');
             }
-            renderCart();
-            alert('Item berhasil ditambahkan ke keranjang!');
         };
 
         function renderCart() {
@@ -760,16 +1544,28 @@ app.get('/', (req, res) => {
                         '<div><span class="font-bold text-manufacture">' + item.type + '</span><br>' +
                         '<span class="text-sm">' + item.jenis + ' - ' + item.kondisi + '</span><br>' +
                         '<span class="text-xs">' + item.panjang + 'mm x ' + item.lebar + 'mm | ' + item.quantity + ' unit | Berat: ' + item.beratTotal.toFixed(2) + 'kg/unit</span><br>' +
-                        '<span class="text-xs text-slate-400">H/Thd: ' + item.tinggiBearing + '/' + item.tebalBearing + 'mm | Jarak: ' + item.jarakBearing + '/' + item.jarakCrossbar + 'mm</span></div>' +
+                        '<span class="text-xs text-slate-400">H/T/D: ' + item.tinggiBearing + '/' + item.tebalBearing + '/' + item.diameterCrossbar + 'mm | Jarak: ' + item.jarakBearing + '/' + item.jarakCrossbar + 'mm</span><br>' +
+                        '<span class="text-xs text-slate-400">PPN 11%: Rp ' + (item.nilaiPPN || 0).toLocaleString('id-ID') + '</span></div>' +
+                        '<div class="text-right"><div class="font-bold">Rp ' + item.subtotal.toLocaleString('id-ID') + '</div>' +
+                        '<button onclick="removeFromCartCalc(' + index + ')" class="text-red-500 text-xs hover:text-red-700">Hapus</button></div></div>';
+                } else if (item.type === 'Stair Tread') {
+                    html += '<div class="bg-white p-3 rounded-lg border border-emerald-200 flex justify-between items-center">' +
+                        '<div><span class="font-bold text-manufacture">' + item.type + '</span><br>' +
+                        '<span class="text-sm">' + item.jenis + ' - ' + item.kondisi + '</span><br>' +
+                        '<span class="text-xs">' + item.panjang + 'mm x ' + item.lebar + 'mm | ' + item.quantity + ' unit | Berat: ' + (item.beratTotal || 0).toFixed(2) + 'kg/unit</span><br>' +
+                        '<span class="text-xs text-slate-400">H/T: ' + item.tinggiBearing + '/' + item.tebalBearing + 'mm | D: ' + item.diameterCrossbar + 'mm | Jarak: ' + item.jarakBearing + '/' + item.jarakCrossbar + 'mm</span><br>' +
+                        '<span class="text-xs text-slate-400">End Plate H/T: ' + (item.tinggiEndPlate || '-') + '/' + (item.tebalEndPlate || '-') + 'mm | Checkered H/T: ' + (item.tinggiCheckered || '-') + '/' + (item.tebalCheckered || '-') + 'mm</span><br>' +
+                        '<span class="text-xs text-slate-400">PPN 11%: Rp ' + (item.nilaiPPN || 0).toLocaleString('id-ID') + '</span></div>' +
                         '<div class="text-right"><div class="font-bold">Rp ' + item.subtotal.toLocaleString('id-ID') + '</div>' +
                         '<button onclick="removeFromCartCalc(' + index + ')" class="text-red-500 text-xs hover:text-red-700">Hapus</button></div></div>';
                 } else {
                     html += '<div class="bg-white p-3 rounded-lg border border-emerald-200 flex justify-between items-center">' +
                         '<div><span class="font-bold text-manufacture">' + item.type + '</span><br>' +
-                        '<span class="text-xs">Koef: ' + item.koefisien + ' | Berat: ' + item.berat + 'kg | ' + item.quantity + ' unit</span></div>' +
+                        '<span class="text-xs">Koef: ' + item.koefisien + ' | Berat: ' + item.berat + 'kg | ' + item.quantity + ' unit</span><br>' +
+                        '<span class="text-xs text-slate-400">PPN 11%: Rp ' + (item.nilaiPPN || 0).toLocaleString('id-ID') + '</span></div>' +
                         '<div class="text-right"><div class="font-bold">Rp ' + item.subtotal.toLocaleString('id-ID') + '</div>' +
                         '<button onclick="removeFromCartCalc(' + index + ')" class="text-red-500 text-xs hover:text-red-700">Hapus</button></div></div>';
-                }
+                }   
             });
             
             cartDiv.innerHTML = html;
@@ -797,17 +1593,33 @@ app.get('/', (req, res) => {
                 return;
             }
             let total = 0;
+            let totalSebelumPPN = 0;
+            let totalPPN = 0;
             let breakdown = '';
+            
             cart.forEach(item => {
                 total += item.subtotal;
+                totalSebelumPPN += item.hargaSebelumPPN || (item.subtotal / 1.11);
+                totalPPN += item.nilaiPPN || (item.subtotal - (item.subtotal / 1.11));
+                
                 if (item.type === 'Steel Grating') {
-                    breakdown += item.jenis + ' ' + item.kondisi + ' (' + item.panjang + 'x' + item.lebar + 'mm) x' + item.quantity + ' = Rp ' + item.subtotal.toLocaleString('id-ID') + '<br>';
+                    breakdown += item.jenis + ' ' + item.kondisi + ' (' + item.panjang + 'x' + item.lebar + 'mm) x' + item.quantity + 
+                        ' = Rp ' + item.subtotal.toLocaleString('id-ID') + '<br>';
                 } else {
                     breakdown += item.type + ' x' + item.quantity + ' = Rp ' + item.subtotal.toLocaleString('id-ID') + '<br>';
                 }
             });
+            
             document.getElementById('total-price').innerHTML = 'Rp ' + total.toLocaleString('id-ID');
-            document.getElementById('price-breakdown').innerHTML = breakdown;
+            document.getElementById('price-breakdown').innerHTML = 
+                '<div class="text-left text-sm">' +
+                breakdown +
+                '<hr class="my-2 border-white/30">' +
+                '<div class="flex justify-between"><span>Total sebelum PPN:</span><span>Rp ' + Math.ceil(totalSebelumPPN).toLocaleString('id-ID') + '</span></div>' +
+                '<div class="flex justify-between text-yellow-200"><span>PPN 11%:</span><span>Rp ' + Math.ceil(totalPPN).toLocaleString('id-ID') + '</span></div>' +
+                '<div class="flex justify-between font-bold text-lg mt-1"><span>Total termasuk PPN:</span><span>Rp ' + total.toLocaleString('id-ID') + '</span></div>' +
+                '</div>';
+            
             document.getElementById('price-result').classList.remove('hidden');
         };
 
@@ -952,12 +1764,29 @@ app.get('/', (req, res) => {
 
         // ==================== EVENT LISTENERS ====================
         // Event untuk kalkulator
+        document.getElementById('crossbar-diameter-select').addEventListener('change', function() {
+            updateCrossbarDiameter();
+        });
+
         document.getElementById('calc-product-type').addEventListener('change', function() {
             toggleCalcPanel();
             if (this.value !== 'grating') {
                 updateSizeOptions();
             }
         });
+
+        document.getElementById('calc-sub-category').addEventListener('change', function() {
+            if (document.getElementById('calc-product-type').value === 'grating') {
+                const subCategory = this.value;
+                updateCalculatorImage(subCategory);
+                toggleCalcPanel();
+            }
+        });
+
+        toggleSubCategory();
+        toggleCalcPanel();
+        calculateSteelGratingWeight();
+        updateOtherEstimate();
         
         // Event untuk input steel grating
         const gratingInputs = ['grating-length', 'grating-width', 'bearing-height', 'bearing-spacing', 'crossbar-spacing', 'price-per-kg', 'price-galvanis', 'grating-coating', 'grating-type', 'grating-quantity'];
@@ -989,8 +1818,8 @@ app.get('/', (req, res) => {
             initImageSlideshow('guardrail-slides', 5000);
             
             // Set harga readonly
-            document.getElementById('price-per-kg').value = HARGA_BESI_PER_KG;
-            document.getElementById('price-galvanis').value = HARGA_GALVANIS_PER_KG;
+            document.getElementById('price-per-kg').value = HARGA_BESI_STEELGRATING_PER_KG;
+            document.getElementById('price-galvanis').value = HARGA_GALVANIS_STEELGRATING_PER_KG;
             
             // Set nilai default untuk crossbar spacing jika P=60
             function checkCrossbarOnLoad() {
