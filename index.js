@@ -171,6 +171,8 @@ app.get('/', (req, res) => {
                         <h3 class="text-3xl md:text-4xl lg:text-5xl font-black mb-6 text-slate-800 leading-snug industrial-text">Berdedikasi dalam <span class="text-manufacture">Penyediaan Steel Grating</span> Sejak 2024</h3>
                         <p class="text-slate-600 mb-6 leading-relaxed text-lg">Berdiri pada tanggal 08 Agustus 2024 di Kota Gresik, Jawa Timur, PT. Amanah Adi Guna berspesialisasi dalam penyediaan steel grating dan material infrastruktur baja hilir.</p>
                         <p class="text-slate-600 mb-8 leading-relaxed">Misi kami adalah menjadi mitra strategis pembangunan nasional yang menghadirkan solusi infrastruktur baja kelas dunia melalui komitmen terhadap integritas struktural, keamanan jalan, dan keberlanjutan lingkungan.</p>
+                    </div>
+                    <div class="reveal-right">
                         <div class="grid grid-cols-2 gap-6 border-t border-slate-200 pt-8">
                             <div class="flex items-start gap-3">
                                 <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fas fa-certificate text-manufacture"></i></div>
@@ -180,19 +182,6 @@ app.get('/', (req, res) => {
                                 <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0"><i class="fas fa-map-marker-alt text-manufacture"></i></div>
                                 <div><h4 class="font-black text-manufacture industrial-text">Lokasi Strategis</h4><p class="text-sm text-slate-500">Berada di pusat wilayah Gresik.</p></div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="reveal-right">
-                        <div class="bg-white/90 backdrop-blur-md p-8 rounded-2xl border-2 border-emerald-200/50 shadow-2xl hover-lift">
-                            <div class="flex items-center gap-3 mb-6">
-                                <div class="w-12 h-12 bg-manufacture rounded-xl flex items-center justify-center"><i class="fas fa-building text-white text-xl"></i></div>
-                                <h4 class="text-xl font-black text-manufacture industrial-text">Informasi Legalitas</h4>
-                            </div>
-                            <ul class="space-y-4 text-slate-700">
-                                <li class="flex items-start p-3 rounded-lg hover:bg-emerald-50 transition-colors duration-300"><i class="fas fa-check-circle text-emerald-600 mt-1 mr-3 text-lg"></i><span><strong class="industrial-text">Akta Pendirian:</strong><br>AHU-045746.AH.01.30.Tahun 2024</span></li>
-                                <li class="flex items-start p-3 rounded-lg hover:bg-emerald-50 transition-colors duration-300"><i class="fas fa-check-circle text-emerald-600 mt-1 mr-3 text-lg"></i><span><strong class="industrial-text">NIB:</strong><br>2208240036555</span></li>
-                                <li class="flex items-start p-3 rounded-lg hover:bg-emerald-50 transition-colors duration-300"><i class="fas fa-check-circle text-emerald-600 mt-1 mr-3 text-lg"></i><span><strong class="industrial-text">NPWP:</strong><br>0125.7774.3364.2000</span></li>
-                            </ul>
                         </div>
                     </div>
                 </div>
@@ -896,10 +885,12 @@ app.get('/', (req, res) => {
             const nilaiPPN = hargaSebelumPPN * PPN;
             const hargaSetelahPPN = hargaSebelumPPN + nilaiPPN;
             const hargaBulat = Math.ceil(hargaSetelahPPN / 1000) * 1000;
-            
+            const hargaBulatSebelumPPN = hargaBulat / 111 * 100;
+            const PPNBulat = hargaBulat - hargaBulatSebelumPPN;
+
             document.getElementById('estimated-price-per-unit').innerHTML = 'Rp ' + hargaBulat.toLocaleString('id-ID');
-            document.getElementById('estimated-price-before-ppn').innerHTML = 'Rp ' + Math.ceil(hargaSebelumPPN).toLocaleString('id-ID');
-            document.getElementById('estimated-ppn-value').innerHTML = 'Rp ' + Math.ceil(nilaiPPN).toLocaleString('id-ID');
+            document.getElementById('estimated-price-before-ppn').innerHTML = 'Rp ' + Math.floor(hargaBulatSebelumPPN).toLocaleString('id-ID');
+            document.getElementById('estimated-ppn-value').innerHTML = 'Rp ' + Math.ceil(PPNBulat).toLocaleString('id-ID');
             
             return { totalBerat: totalBerat, hargaSebelumPPN: hargaSebelumPPN, nilaiPPN: nilaiPPN, hargaSetelahPPN: hargaSetelahPPN, hargaBulat: hargaBulat };
         }
