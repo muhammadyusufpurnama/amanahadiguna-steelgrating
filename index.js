@@ -889,8 +889,8 @@ app.get('/', (req, res) => {
             const PPNBulat = hargaBulat - hargaBulatSebelumPPN;
 
             document.getElementById('estimated-price-per-unit').innerHTML = 'Rp ' + hargaBulat.toLocaleString('id-ID');
-            document.getElementById('estimated-price-before-ppn').innerHTML = 'Rp ' + Math.floor(hargaBulatSebelumPPN).toLocaleString('id-ID');
-            document.getElementById('estimated-ppn-value').innerHTML = 'Rp ' + Math.ceil(PPNBulat).toLocaleString('id-ID');
+            document.getElementById('estimated-price-before-ppn').innerHTML = 'Rp ' + Math.round(hargaBulatSebelumPPN).toLocaleString('id-ID');
+            document.getElementById('estimated-ppn-value').innerHTML = 'Rp ' + Math.round(PPNBulat).toLocaleString('id-ID');
             
             return { totalBerat: totalBerat, hargaSebelumPPN: hargaSebelumPPN, nilaiPPN: nilaiPPN, hargaSetelahPPN: hargaSetelahPPN, hargaBulat: hargaBulat };
         }
@@ -983,13 +983,15 @@ app.get('/', (req, res) => {
             const nilaiPPN = hargaSebelumPPN * PPN;
             const hargaSetelahPPN = hargaSebelumPPN + nilaiPPN;
             const hargaBulat = Math.ceil(hargaSetelahPPN / 1000) * 1000;
+            const hargaBulatSebelumPPN = hargaBulat / 111 * 100;
+            const PPNBulat = hargaBulat - hargaBulatSebelumPPN;
             
             const estimatedPriceEl = document.getElementById('stair-estimated-price');
             const priceBeforePpnEl = document.getElementById('stair-price-before-ppn');
             const ppnValueEl = document.getElementById('stair-ppn-value');
             if (estimatedPriceEl) estimatedPriceEl.innerHTML = 'Rp ' + hargaBulat.toLocaleString('id-ID');
-            if (priceBeforePpnEl) priceBeforePpnEl.innerHTML = 'Rp ' + Math.ceil(hargaSebelumPPN).toLocaleString('id-ID');
-            if (ppnValueEl) ppnValueEl.innerHTML = 'Rp ' + Math.ceil(nilaiPPN).toLocaleString('id-ID');
+            if (priceBeforePpnEl) priceBeforePpnEl.innerHTML = 'Rp ' + Math.round(hargaBulatSebelumPPN).toLocaleString('id-ID');
+            if (ppnValueEl) ppnValueEl.innerHTML = 'Rp ' + Math.round(PPNBulat).toLocaleString('id-ID');
             
             return { totalBerat: totalBerat, hargaSebelumPPN: hargaSebelumPPN, nilaiPPN: nilaiPPN, hargaSetelahPPN: hargaSetelahPPN, hargaBulat: hargaBulat };
         }
@@ -1041,10 +1043,12 @@ app.get('/', (req, res) => {
             const nilaiPPN = hargaSebelumPPN * PPN;
             const hargaSetelahPPN = hargaSebelumPPN + nilaiPPN;
             const hargaBulat = Math.ceil(hargaSetelahPPN / 1000) * 1000;
+            const hargaBulatSebelumPPN = hargaBulat / 111 * 100;
+            const PPNBulat = hargaBulat - hargaBulatSebelumPPN;
             
             document.getElementById('sgt-estimated-price').innerHTML = 'Rp ' + hargaBulat.toLocaleString('id-ID');
-            document.getElementById('sgt-price-before-ppn').innerHTML = 'Rp ' + Math.ceil(hargaSebelumPPN).toLocaleString('id-ID');
-            document.getElementById('sgt-ppn-value').innerHTML = 'Rp ' + Math.ceil(nilaiPPN).toLocaleString('id-ID');
+            document.getElementById('sgt-price-before-ppn').innerHTML = 'Rp ' + Math.round(hargaBulatSebelumPPN).toLocaleString('id-ID');
+            document.getElementById('sgt-ppn-value').innerHTML = 'Rp ' + Math.round(PPNBulat).toLocaleString('id-ID');
             
             return { beratGrating: beratGrating, beratSupport: beratSupport, totalBerat: totalBerat, hargaSebelumPPN: hargaSebelumPPN, nilaiPPN: nilaiPPN, hargaBulat: hargaBulat };
         }
@@ -1093,10 +1097,12 @@ app.get('/', (req, res) => {
             const nilaiPPN = hargaSebelumPPN * PPN;
             const hargaSetelahPPN = hargaSebelumPPN + nilaiPPN;
             const hargaBulat = Math.ceil(hargaSetelahPPN / 1000) * 1000;
+            const hargaBulatSebelumPPN = hargaBulat / 111 * 100;
+            const PPNBulat = hargaBulat - hargaBulatSebelumPPN;
             
             document.getElementById('sgu-estimated-price').innerHTML = 'Rp ' + hargaBulat.toLocaleString('id-ID');
-            document.getElementById('sgu-price-before-ppn').innerHTML = 'Rp ' + Math.ceil(hargaSebelumPPN).toLocaleString('id-ID');
-            document.getElementById('sgu-ppn-value').innerHTML = 'Rp ' + Math.ceil(nilaiPPN).toLocaleString('id-ID');
+            document.getElementById('sgu-price-before-ppn').innerHTML = 'Rp ' + Math.round(hargaBulatSebelumPPN).toLocaleString('id-ID');
+            document.getElementById('sgu-ppn-value').innerHTML = 'Rp ' + Math.round(PPNBulat).toLocaleString('id-ID');
             
             return { beratGrating: beratGrating, beratSupport: beratSupport, totalBerat: totalBerat, hargaSebelumPPN: hargaSebelumPPN, nilaiPPN: nilaiPPN, hargaBulat: hargaBulat };
         }
